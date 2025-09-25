@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 import { useNavigate } from "react-router-dom";
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, createGlobalStyle } from 'styled-components';
 
 // Import team logos
 import cskLogo from './assets/logo/csk.png';
@@ -45,21 +45,42 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
+// Add global styles
+const GlobalStyle = createGlobalStyle`
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body, html, #root {
+    width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+`;
+
 const Container = styled.div`
   min-height: 100vh;
+  width: 100vw;
   padding: 2rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0;
+  box-sizing: border-box;
+  position: relative;
 `;
 
 const Title = styled.h1`
-  color: #1a365d;
+  color: #f7fafc;
   margin-bottom: 2rem;
   font-size: 2.5rem;
   text-align: center;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 `;
 
 const Button = styled.button`
@@ -113,18 +134,20 @@ const DangerButton = styled(Button)`
 `;
 
 const PlayerCard = styled.div`
-  background: white;
+  background: #2d3748;
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 400px;
   margin: 1rem 0;
   animation: ${fadeIn} 0.3s ease-out;
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  border: 1px solid #4a5568;
   
   &:hover {
     transform: translateY(-5px);
+    box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.4);
   }
 `;
 
@@ -139,13 +162,13 @@ const PlayerImage = styled.img`
 `;
 
 const PlayerName = styled.h2`
-  color: #2d3748;
+  color: #f7fafc;
   margin: 0.5rem 0;
   font-size: 1.5rem;
 `;
 
 const PlayerMeta = styled.p`
-  color: #4a5568;
+  color: #cbd5e0;
   margin: 0.5rem 0;
   font-size: 1.1rem;
 `;
@@ -154,11 +177,13 @@ const BidInput = styled.input`
   width: 100%;
   padding: 0.75rem 1rem;
   font-size: 1.1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #4a5568;
   border-radius: 8px;
   margin: 1rem 0;
   transition: all 0.3s ease;
   text-align: center;
+  background-color: #2d3748;
+  color: #f7fafc;
   
   &:focus {
     outline: none;
@@ -184,17 +209,19 @@ const TeamGrid = styled.div`
 `;
 
 const TeamButton = styled(Button)`
-  background: #f7fafc;
-  border: 2px solid #e2e8f0;
-  color: #2d3748;
+  background: #2d3748;
+  border: 2px solid #4a5568;
+  color: #f7fafc;
   padding: 0.75rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: all 0.3s ease;
   
   &:hover {
-    background: #edf2f7;
-    border-color: #cbd5e0;
+    background: #4a5568;
+    border-color: #718096;
+    transform: translateY(-2px);
   }
 `;
 
@@ -239,6 +266,91 @@ const Auction = () => {
 
     fetchData();
   }, []);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        backdropFilter: 'blur(5px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1000,
+        overflow: 'hidden'
+      }}>
+        <div style={{ 
+          textAlign: 'center',
+          maxWidth: '300px',
+          width: '100%',
+          padding: '2.5rem',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '16px',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
+        }}>
+          <div style={{
+            position: 'relative',
+            width: '60px',
+            height: '60px',
+            margin: '0 auto 1.5rem'
+          }}>
+            <div style={{
+              position: 'absolute',
+              width: '40px',
+              height: '40px',
+              background: 'linear-gradient(145deg, #d4a76a, #f7c48a)',
+              borderRadius: '50%',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#5d3f1c',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              animation: 'pulse 1.5s infinite ease-in-out'
+            }}>
+              🏏
+            </div>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              border: '4px solid transparent',
+              borderTopColor: '#3182ce',
+              borderRightColor: '#3182ce',
+              borderRadius: '50%',
+              animation: 'spin 1.2s linear infinite',
+            }} />
+          </div>
+          <h3 style={{ 
+            marginBottom: '0.5rem',
+            color: '#2d3748',
+            fontSize: '1.25rem',
+            fontWeight: '600'
+          }}>
+            Loading Auction...
+          </h3>
+          <p style={{ 
+            color: '#718096',
+            fontSize: '0.9rem',
+            marginBottom: '1.5rem'
+          }}>
+            Fetching players and teams
+          </p>
+        </div>
+      </div>
+    );
+  }
+
 
   // Pick random player that is not the currently selected one
   const pickRandomPlayer = () => {
@@ -342,37 +454,15 @@ const Auction = () => {
           padding: '2.5rem',
           backgroundColor: 'rgba(255, 255, 255, 0.95)',
           borderRadius: '16px',
-          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)'
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
+          position: 'relative'
         }}>
           <div style={{
-            position: 'relative',
-            width: '120px',
-            height: '120px',
-            margin: '0 auto 2rem',
+            width: '60px',
+            height: '60px',
+            margin: '0 auto 1.5rem',
+            position: 'relative'
           }}>
-            {/* Cricket Ball */}
-            <div style={{
-              position: 'absolute',
-              width: '40px',
-              height: '40px',
-              background: 'linear-gradient(145deg, #d4a76a, #f7c48a)',
-              borderRadius: '50%',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              boxShadow: '0 0 10px rgba(0,0,0,0.2)',
-              zIndex: 2,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#5d3f1c',
-              fontSize: '20px',
-              fontWeight: 'bold',
-              animation: 'pulse 1.5s infinite ease-in-out'
-            }}>
-              🏏
-            </div>
-            {/* Spinning Circle */}
             <div style={{
               position: 'absolute',
               width: '100%',
@@ -381,35 +471,15 @@ const Auction = () => {
               borderTopColor: '#3182ce',
               borderRightColor: '#3182ce',
               borderRadius: '50%',
-              animation: 'spin 1.2s linear infinite',
-            }} />
-            <div style={{
-              position: 'absolute',
-              width: '80%',
-              height: '80%',
-              border: '3px solid transparent',
-              borderBottomColor: '#2c5282',
-              borderLeftColor: '#2c5282',
-              borderRadius: '50%',
-              top: '10%',
-              left: '10%',
-              animation: 'spinReverse 1.5s linear infinite',
+              animation: 'spin 1.2s linear infinite'
             }} />
           </div>
-          <h3 style={{ 
-            color: '#2d3748', 
-            marginBottom: '1rem',
-            fontSize: '1.5rem',
-            fontWeight: '600'
-          }}>
-            Setting Up Auction...
-          </h3>
           <p style={{ 
             color: '#4a5568',
             marginBottom: '1.5rem',
             lineHeight: '1.5'
           }}>
-            Fetching players and teams data
+            Fetching players and teams
             <span style={{
               display: 'inline-block',
               width: '10px',
@@ -446,7 +516,9 @@ const Auction = () => {
   // Check if all players are finished
   if (players.length === 0) {
     return (
-      <Container>
+      <>
+        <GlobalStyle />
+        <Container>
         <Title>🏆 Auction Complete! 🎉</Title>
         <div style={{ 
           background: 'white', 
@@ -468,12 +540,15 @@ const Auction = () => {
             🏆 Show Results
           </PrimaryButton>
         </div>
-      </Container>
+        </Container>
+      </>
     );
   }
 
   return (
-    <Container>
+    <>
+      <GlobalStyle />
+      <Container>
       <Title>🏆 IPL Auction 2024</Title>
       
       <PrimaryButton 
@@ -688,7 +763,8 @@ const Auction = () => {
           </DangerButton>
         </div>
       )}
-    </Container>
+      </Container>
+    </>
   );
 };
 
